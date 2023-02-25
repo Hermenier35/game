@@ -10,7 +10,7 @@ public class CreateGameServer {
 	}
 	
 	public void execute() {
-		thread.start(); 
+		thread.start();
 	}
 	
 

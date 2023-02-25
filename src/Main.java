@@ -37,7 +37,7 @@ public class Main extends PApplet {
     }
     public void setup(){
         p = new Player(this);
-        event = new EventListener(p.position,socket, client.id, p);
+        event = new EventListener(p.position,socket, client.id);
         thread = new Thread(event);
         thread.start();
         p.events.addListener("position", event);
@@ -65,20 +65,20 @@ public class Main extends PApplet {
         if(this.keypressed){
             if(keyCode == UP ){
                 this.p.moveY(-1);
-                Logger.getGlobal().info("moving up");
+              //  Logger.getGlobal().info("moving up");
             }
             if(keyCode == DOWN){
                 this.p.moveY(1);
-                Logger.getGlobal().info("moving down");
+               // Logger.getGlobal().info("moving down");
             }
             if(keyCode == LEFT){
                 this.p.moveX(-1);
-                Logger.getGlobal().info("moving left");
+               // Logger.getGlobal().info("moving left");
 
             }
             if(keyCode == RIGHT){
                 this.p.moveX(1);
-                Logger.getGlobal().info("moving right");
+               // Logger.getGlobal().info("moving right");
 
             }
 
@@ -91,11 +91,11 @@ public class Main extends PApplet {
     }
      public void keyPressed(){
         this.keypressed = true;
-        Logger.getGlobal().info("keypressed");
+       // Logger.getGlobal().info("keypressed");
 
     }
     public void keyReleased(){
         this.keypressed = false;
-        Logger.getGlobal().info("keyReleased");
+       // Logger.getGlobal().info("keyReleased");
     }
 }

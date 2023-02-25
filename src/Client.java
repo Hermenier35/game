@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Client {
+public class Client{
 
 	public static final int PORT = 1234;
 	public int id;
@@ -33,5 +33,4 @@ public class Client {
 			e.printStackTrace(); System.exit(1);
 		}
 	}
-
 }
