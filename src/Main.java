@@ -1,20 +1,23 @@
 
+import controlP5.ControlEvent;
+import controlP5.ControlListener;
 import controlP5.ControlP5;
 import controlP5.DropdownList;
 import processing.core.PApplet;
 
 import java.net.Inet4Address;
 import java.net.Socket;
-import java.util.logging.Logger;
 
-public class Main extends PApplet {
+public class Main extends PApplet implements ControlListener {
     Player p;
     boolean keypressed = false;
     ControlP5 cp5 ;
-    private EventListener event;
+    private EventListenerSortant eventSortant;
+    private EventListenerEntrant eventEntrant;
     private static Socket socket;
     private static Client client;
     public Thread thread;
+    public Thread threadEventEntrant;
     DropdownList menu;
 
     public static void main(String[] args) {
@@ -37,10 +40,15 @@ public class Main extends PApplet {
     }
     public void setup(){
         p = new Player(this);
-        event = new EventListener(p.position,socket, client.id);
-        thread = new Thread(event);
+        eventSortant = new EventListenerSortant(p.position,socket, client.id);
+        eventEntrant = new EventListenerEntrant(socket);
+        threadEventEntrant = new Thread(eventEntrant);
+        threadEventEntrant.start();
+        thread = new Thread(eventSortant);
         thread.start();
-        p.events.addListener("position", event);
+        p.events.addListener("position", eventSortant);
+
+
         cp5 = new ControlP5(this);
         cp5.addButton("GO")
                 .setValue(0)
@@ -53,12 +61,10 @@ public class Main extends PApplet {
         menu.setBackgroundColor(color(190));
         menu.setItemHeight(20);
         menu.setBarHeight(15);
-        menu.addItem("Multi player",0);
-        menu.addItem("Single player",1);
-
+        menu.addItem("Create Server",0);
+        menu.addItem("Join Server",1);
     }
     public void draw(){
-
 
         background(255);
         p.show();
@@ -85,9 +91,6 @@ public class Main extends PApplet {
 
         }
 
-
-
-
     }
      public void keyPressed(){
         this.keypressed = true;
@@ -97,5 +100,10 @@ public class Main extends PApplet {
     public void keyReleased(){
         this.keypressed = false;
        // Logger.getGlobal().info("keyReleased");
+    }
+
+    @Override
+    public void controlEvent(ControlEvent controlEvent) {
+        System.out.println(controlEvent.getController().getValue());
     }
 }
