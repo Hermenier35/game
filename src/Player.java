@@ -1,22 +1,26 @@
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public class Player {
+import java.util.Observable;
+
+public class Player{
     PVector position ;
     PApplet scene;
+    public EventManager events;
 
     float velocity = 10f;
     Player(PApplet scene){
         this.scene = scene;
         this.position = new PVector(scene.width/2,scene.height/2);
-
+        events = new EventManager("position");
     }
     void moveX(int direction){
-
         this.position.x +=velocity*direction;
+        events.notify("position", position);
     }
     void moveY(int direction){
         this.position.y +=velocity*direction;
+        events.notify("position", position);
     }
 
     void show(){
@@ -24,4 +28,5 @@ public class Player {
         this.scene.stroke(0);
         this.scene.rect(this.position.x,this.position.y,20,20);
     }
+
 }

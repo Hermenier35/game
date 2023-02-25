@@ -22,7 +22,6 @@ public class Server implements Runnable{
 	@Override
 	public void run() {
 		runServer();
-		
 	}
 	
 	public void runServer() {
