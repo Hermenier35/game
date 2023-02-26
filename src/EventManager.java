@@ -5,8 +5,8 @@ import java.util.Map;
 public class EventManager {
      Map<String, List<Listener>> listeners = new HashMap<>();
 
-    public EventManager(String... operations) {
-        for (String operation : operations) {
+    public EventManager(String... eventTypes) {
+        for (String operation : eventTypes) {
             this.listeners.put(operation, new ArrayList<>());
         }
     }
