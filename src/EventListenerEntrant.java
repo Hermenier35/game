@@ -7,9 +7,11 @@ import java.net.Socket;
 public class EventListenerEntrant implements Runnable{
     Socket socket;
     JSONObject data;
+    EventManager events;
 
     public EventListenerEntrant(Socket socket) {
         this.socket = socket;
+        events = new EventManager("data");
     }
 
     @Override
@@ -17,8 +19,8 @@ public class EventListenerEntrant implements Runnable{
         while(true) {
             try {
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                data = JSONObject.parse(in.readLine());
-                //System.out.println(data);
+                data = new JSONObject(in);
+                events.notify("data", data);
             } catch (Exception e) {
                 System.err.println("Erreur sérieuse : " + e);
                 e.printStackTrace();

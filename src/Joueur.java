@@ -16,7 +16,7 @@ public class Joueur implements Runnable {
 	public Joueur(int id, Socket socket) {
 		this.id = id;
 		this.socket = socket;
-		manager = new EventManager("position");
+		manager = new EventManager("data");
 	}
 
 	@Override
@@ -33,7 +33,9 @@ public class Joueur implements Runnable {
 	public void handle() throws IOException {
 		while(true) {
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			data = JSONObject.parse(in.readLine());
+			data = new JSONObject(in);
+			data.setInt("id", this.id);
+			System.out.println(data);
 			manager.notify("data" ,data);
 		}
 	}

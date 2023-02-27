@@ -19,9 +19,6 @@ public class Main extends PApplet implements ControlListener {
     boolean arret = false;
 
     public static void main(String[] args) {
-      /*  CreateGameServer server = new CreateGameServer();
-        server.execute();
-          */
        // PApplet.main("Main");
         String[] processingArgs = {"Main"};
         Main main = new Main();
@@ -96,7 +93,9 @@ public class Main extends PApplet implements ControlListener {
         System.out.println(mouseX + " " + mouseY);
         if (mouseX >150 && mouseX < 340 && mouseY > 200 && mouseY < 310)
         switch (controlEvent.getName()) {
-            case "Create Server" : System.out.println("C"); break;
+            case "Create Server" : CreateGameServer server = new CreateGameServer();
+                                   server.execute();
+                                   connectClient("localhost", "admin");break;
             case "Join Server" : cp5.get("Join Server").remove();
                                  cp5.addTextfield("IP", 150, 240, 90, 30)
                                          .setText("Address IP");
@@ -125,7 +124,7 @@ public class Main extends PApplet implements ControlListener {
     public void connectClient(String ip, String pseudo){
         try {
             //*******connection au serveur*******
-         /*   Inet4Address address = (Inet4Address) Inet4Address.getByName(ip);
+            Inet4Address address = (Inet4Address) Inet4Address.getByName(ip);
             socket = new Socket(address, 1234);
             client = new Client(socket, pseudo);
             client.lanceClient();
@@ -137,7 +136,7 @@ public class Main extends PApplet implements ControlListener {
             threadEventEntrant = new Thread(eventEntrant);
             thread = new Thread(eventSortant);
             threadEventEntrant.start();
-            thread.start();*/
+            thread.start();
         }catch (Exception e){
             System.err.println("Erreur sérieuse : "+e);
             e.printStackTrace(); System.exit(1);

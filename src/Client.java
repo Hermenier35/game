@@ -1,12 +1,7 @@
-import processing.core.PVector;
+import processing.data.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
-import java.util.Observable;
-import java.util.Observer;
 
 public class Client{
 
@@ -14,6 +9,7 @@ public class Client{
 	public int id;
 	private String name;
 	private Socket socket;
+	private JSONObject data;
 
 	public Client(Socket socket, String name){
 		this.name = name;
@@ -21,13 +17,15 @@ public class Client{
 	}
 	public void lanceClient() {
 		try {
-			PrintWriter pw = new PrintWriter(
-					new OutputStreamWriter(socket.getOutputStream()));
-			pw.println(name);
+			JSONObject connectSalon = new JSONObject();
+			connectSalon.setString("type", "connectSalon");
+			connectSalon.setString("pseudo", this.name);
+			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+			pw.println(connectSalon);
 			pw.flush();
-			BufferedReader bf = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			String message = bf.readLine();
-			id = Integer.parseInt(message);
+			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			data = new JSONObject(in);
+			System.out.println(data);
 		} catch(Exception e) {
 			System.err.println("Erreur sérieuse : "+e);
 			e.printStackTrace(); System.exit(1);

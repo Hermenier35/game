@@ -1,5 +1,4 @@
 import processing.data.JSONObject;
-
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class EventListenerServer implements Runnable, Listener{
                     for (Joueur j : listJoueurs) {
                         if (j.id != data.getInt("id")) {
                             PrintWriter pw = new PrintWriter(new OutputStreamWriter(j.socket.getOutputStream()));
-                            pw.println(this.data.toString());
+                            pw.println(this.data);
                             pw.flush();
                         }
                     }

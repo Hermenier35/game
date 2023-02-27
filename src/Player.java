@@ -12,15 +12,15 @@ public class Player implements  ConvertJson{
     Player(PApplet scene){
         this.scene = scene;
         this.position = new PVector(scene.width/4,scene.height/4);
-        events = new EventManager("position");
+        events = new EventManager("data");
     }
     void moveX(int direction){
         this.position.x +=velocity*direction;
-        events.notify("position", transform());
+        events.notify("data", transform());
     }
     void moveY(int direction){
         this.position.y +=velocity*direction;
-        events.notify("position", transform());
+        events.notify("data", transform());
     }
 
     void show(){

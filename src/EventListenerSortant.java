@@ -1,7 +1,4 @@
-import processing.core.PVector;
-import processing.data.JSONArray;
 import processing.data.JSONObject;
-
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -31,7 +28,7 @@ public class EventListenerSortant implements Listener, Runnable {
                 isChanged.set(false);
                 try {
                     PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-                    pw.println(this.data.toString());
+                    pw.println(this.data);
                     pw.flush();
                 } catch (Exception e) {
                     System.err.println("Erreur sérieuse : " + e);
