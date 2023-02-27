@@ -13,22 +13,26 @@ public class Server implements Runnable{
 	private final int PORT = 1234;
 	private final int NBRJOUEURMAX = 10;
 	ArrayList<Joueur> joueurs;
+	EventListenerServer eventListenerServer;
+	Thread thread;
 	Executor threadspoll = Executors.newFixedThreadPool(NBRJOUEURMAX);
 	
 	public Server() {
 		joueurs = new ArrayList<>();
+		eventListenerServer = new EventListenerServer(joueurs);
 	}
 	
 	@Override
 	public void run() {
 		runServer();
-		
 	}
 	
 	public void runServer() {
 	
 		try {
 			ServerSocket socketAttente = new ServerSocket(PORT);
+			thread = new Thread(eventListenerServer);
+			thread.start();
 			
 			do {
 				Socket clientSocket = socketAttente.accept();
@@ -38,8 +42,8 @@ public class Server implements Runnable{
 				int id = joueurs.size();
 				Joueur joueur = new Joueur(x, y, id, clientSocket);
 				threadspoll.execute(joueur);
+				joueur.manager.addListener("position", eventListenerServer);
 				joueurs.add(joueur);
-				
 			}while(true);
 		}catch(Exception e){
 			System.err.println("Erreur: " + e); 
@@ -59,5 +63,4 @@ public class Server implements Runnable{
 		}
 		
 	}
-
 }
