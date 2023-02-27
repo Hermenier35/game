@@ -1,3 +1,5 @@
+import processing.data.JSONObject;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -36,15 +38,13 @@ public class Server implements Runnable{
 			
 			do {
 				Socket clientSocket = socketAttente.accept();
-				int x = 0;
-				int y = 0;
 				giveId(clientSocket);
 				int id = joueurs.size();
-				Joueur joueur = new Joueur(x, y, id, clientSocket);
+				Joueur joueur = new Joueur(id, clientSocket);
 				threadspoll.execute(joueur);
-				joueur.manager.addListener("position", eventListenerServer);
+				joueur.manager.addListener("data", eventListenerServer);
 				joueurs.add(joueur);
-			}while(true);
+			}while(joueurs.size() < NBRJOUEURMAX);
 		}catch(Exception e){
 			System.err.println("Erreur: " + e); 
 			e.printStackTrace();
@@ -53,9 +53,12 @@ public class Server implements Runnable{
 	} 
 	
 	public void giveId(Socket s) {
+		JSONObject IDdata = new JSONObject();
+		IDdata.setString("type", "attribution_id");
+		IDdata.setInt("id", joueurs.size());
 		try {
 			PrintWriter out = new PrintWriter(s.getOutputStream());
-			out.println(joueurs.size());
+			out.println(IDdata);
 			out.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

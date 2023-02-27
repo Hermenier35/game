@@ -1,3 +1,5 @@
+import processing.data.JSONObject;
+
 public interface Listener {
-    void update(String eventType, Object arg);
+    void update(String eventType, JSONObject data);
 }

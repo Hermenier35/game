@@ -1,3 +1,5 @@
+import processing.data.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,10 +23,10 @@ public class EventManager {
         users.remove(listener);
     }
 
-    public void notify(String eventType, Object file) {
+    public void notify(String eventType, JSONObject data) {
         List<Listener> users = listeners.get(eventType);
         for (Listener listener : users) {
-            listener.update(eventType, file);
+            listener.update(eventType, data);
         }
     }
 }
