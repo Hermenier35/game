@@ -44,7 +44,7 @@ public class Server implements Runnable{
 				threadspoll.execute(joueur);
 				joueur.manager.addListener("position", eventListenerServer);
 				joueurs.add(joueur);
-			}while(true);
+			}while(joueurs.size() < NBRJOUEURMAX);
 		}catch(Exception e){
 			System.err.println("Erreur: " + e); 
 			e.printStackTrace();

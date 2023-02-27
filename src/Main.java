@@ -1,10 +1,8 @@
 
-import controlP5.ControlEvent;
-import controlP5.ControlListener;
-import controlP5.ControlP5;
-import controlP5.DropdownList;
+import controlP5.*;
 import processing.core.PApplet;
 
+import java.awt.event.MouseListener;
 import java.net.Inet4Address;
 import java.net.Socket;
 
@@ -14,25 +12,19 @@ public class Main extends PApplet implements ControlListener {
     ControlP5 cp5 ;
     private EventListenerSortant eventSortant;
     private EventListenerEntrant eventEntrant;
-    private static Socket socket;
-    private static Client client;
+    private Socket socket;
+    private Client client;
     public Thread thread;
     public Thread threadEventEntrant;
-    DropdownList menu;
 
     public static void main(String[] args) {
-        CreateGameServer server = new CreateGameServer();
+      /*  CreateGameServer server = new CreateGameServer();
         server.execute();
-        try {
-            Inet4Address address = (Inet4Address) Inet4Address.getByName("10.188.217.29");
-            socket = new Socket(address, 1234);
-            client = new Client(socket, "Pierre");
-            client.lanceClient();
-        }catch (Exception e){
-            System.err.println("Erreur sérieuse : "+e);
-            e.printStackTrace(); System.exit(1);
-        }
-        PApplet.main("Main");
+          */
+       // PApplet.main("Main");
+        String[] processingArgs = {"Main"};
+        Main main = new Main();
+        PApplet.runSketch(processingArgs, main);
 
     }
     public void settings() {
@@ -40,32 +32,23 @@ public class Main extends PApplet implements ControlListener {
     }
     public void setup(){
         p = new Player(this);
-        eventSortant = new EventListenerSortant(p.position,socket, client.id);
-        eventEntrant = new EventListenerEntrant(socket);
-        threadEventEntrant = new Thread(eventEntrant);
-        threadEventEntrant.start();
-        thread = new Thread(eventSortant);
-        thread.start();
-        p.events.addListener("position", eventSortant);
+       // size(200, 200);
+        /*
+
+        p.events.addListener("position", eventSortant);  */
 
 
         cp5 = new ControlP5(this);
-        cp5.addButton("GO")
+        cp5.addButton("Create Server")
                 .setValue(0)
-                .setPosition(82,0)
-                .setSize(40,20);
-        menu = cp5.addDropdownList("Menu")
-                .setPosition(0, 0)
-                .setSize(80,200);
-
-        menu.setBackgroundColor(color(190));
-        menu.setItemHeight(20);
-        menu.setBarHeight(15);
-        menu.addItem("Create Server",0);
-        menu.addItem("Join Server",1);
+                .setPosition(150,200)
+                .setSize(200,30);
+        cp5.addButton("Join Server")
+                .setValue(1)
+                .setPosition(150,240)
+                .setSize(200, 30);
     }
     public void draw(){
-
         background(255);
         p.show();
         if(this.keypressed){
@@ -104,6 +87,53 @@ public class Main extends PApplet implements ControlListener {
 
     @Override
     public void controlEvent(ControlEvent controlEvent) {
-        System.out.println(controlEvent.getController().getValue());
+        System.out.println(mouseX + " " + mouseY);
+        if (mouseX >150 && mouseX < 340 && mouseY > 200 && mouseY < 310)
+        switch (controlEvent.getName()) {
+            case "Create Server" : System.out.println("C"); break;
+            case "Join Server" : cp5.get("Join Server").remove();
+                                 cp5.addTextfield("IP", 150, 240, 90, 30)
+                                         .setText("Address IP");
+                                 cp5.addTextfield("PSEUDO", 250, 240, 90, 30)
+                                                 .setText("Pseudo");
+                                 cp5.addButton("Join")
+                                         .setValue(3)
+                                         .setPosition(150, 280)
+                                         .setSize(50, 30);
+                                 break;
+            case "Join" : Button b =(Button)cp5.get("Join");
+                          if(b.isMouseOver()) {
+                              Textfield ip = (Textfield) cp5.get("IP");
+                              Textfield pseudo = (Textfield) cp5.get("PSEUDO");
+                              connectClient(ip.getText(), pseudo.getText());
+                              String[] processingArgs = {"Salon"};
+                              PApplet.runSketch(processingArgs, new Salon());
+                              new Salon();
+                          }
+                          break;
+
+        }
+    }
+
+    public void connectClient(String ip, String pseudo){
+        try {
+            //*******connection au serveur*******
+         /*   Inet4Address address = (Inet4Address) Inet4Address.getByName(ip);
+            socket = new Socket(address, 1234);
+            client = new Client(socket, pseudo);
+            client.lanceClient();
+            //***********************************
+
+            //****** 2 threads pour gérer la data entrante et sortante
+            eventSortant = new EventListenerSortant(socket, client.id);
+            eventEntrant = new EventListenerEntrant(socket);
+            threadEventEntrant = new Thread(eventEntrant);
+            thread = new Thread(eventSortant);
+            threadEventEntrant.start();
+            thread.start();*/
+        }catch (Exception e){
+            System.err.println("Erreur sérieuse : "+e);
+            e.printStackTrace(); System.exit(1);
+        }
     }
 }

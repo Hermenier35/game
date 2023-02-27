@@ -1,7 +1,6 @@
 import processing.core.PApplet;
 import processing.core.PVector;
 
-import java.util.Observable;
 
 public class Player{
     PVector position ;
@@ -11,7 +10,7 @@ public class Player{
     float velocity = 10f;
     Player(PApplet scene){
         this.scene = scene;
-        this.position = new PVector(scene.width/2,scene.height/2);
+        this.position = new PVector(scene.width/4,scene.height/4);
         events = new EventManager("position");
     }
     void moveX(int direction){

@@ -7,6 +7,7 @@ import java.net.Socket;
 public class Joueur implements Runnable {
 	double x,y;
 	int id;
+	String pseudo;
 	Socket socket;
 	EventManager manager;
 	
