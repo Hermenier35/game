@@ -2,12 +2,18 @@ import processing.core.PApplet;
 import processing.core.PGraphics;
 
 public class Salon extends PApplet{
+    PApplet f;
 
-    public Salon() {
+
+
+    public Salon(PApplet f) {
+        this.f = f;
+       // f.clear();
     }
 
     public void settings(){
-        this.size(800, 600);
+       // this.size(800, 600);
+       // f.clear();
     }
 
     public void setup(){
@@ -15,7 +21,8 @@ public class Salon extends PApplet{
     }
 
     public void draw(){
-        background(255);
+        System.out.println("test");
+        f.background(0);
     }
 
 

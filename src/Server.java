@@ -36,11 +36,9 @@ public class Server implements Runnable{
 			
 			do {
 				Socket clientSocket = socketAttente.accept();
-				int x = 0;
-				int y = 0;
 				giveId(clientSocket);
 				int id = joueurs.size();
-				Joueur joueur = new Joueur(x, y, id, clientSocket);
+				Joueur joueur = new Joueur(id, clientSocket);
 				threadspoll.execute(joueur);
 				joueur.manager.addListener("position", eventListenerServer);
 				joueurs.add(joueur);

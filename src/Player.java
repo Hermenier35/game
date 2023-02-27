@@ -1,8 +1,9 @@
 import processing.core.PApplet;
 import processing.core.PVector;
+import processing.data.JSONObject;
 
 
-public class Player{
+public class Player implements  ConvertJson{
     PVector position ;
     PApplet scene;
     public EventManager events;
@@ -15,11 +16,11 @@ public class Player{
     }
     void moveX(int direction){
         this.position.x +=velocity*direction;
-        events.notify("position", position);
+        events.notify("position", transform());
     }
     void moveY(int direction){
         this.position.y +=velocity*direction;
-        events.notify("position", position);
+        events.notify("position", transform());
     }
 
     void show(){
@@ -28,4 +29,12 @@ public class Player{
         this.scene.rect(this.position.x,this.position.y,20,20);
     }
 
+    @Override
+    public JSONObject transform() {
+        JSONObject data = new JSONObject();
+        data.setString("type", "player");
+        data.setFloat("positionX", position.x);
+        data.setFloat("positionY", position.y);
+        return data;
+    }
 }

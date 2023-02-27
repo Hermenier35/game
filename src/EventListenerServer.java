@@ -1,3 +1,5 @@
+import processing.data.JSONObject;
+
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -6,19 +8,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class EventListenerServer implements Runnable, Listener{
     ArrayList<Joueur> listJoueurs;
     AtomicBoolean isChanged = new AtomicBoolean(true);
-    static int id;
-    static double x, y;
+    JSONObject data;
 
     public EventListenerServer(ArrayList<Joueur> joueurs) {
         this.listJoueurs = joueurs;
     }
 
     @Override
-    public void update(String eventType, Object arg) {
-        String value[] = (String[]) arg;
-        id = Integer.parseInt(value[1]);
-        x = Double.parseDouble(value[2]);
-        y = Double.parseDouble(value[3]);
+    public void update(String eventType, JSONObject data) {
+        this.data = data;
         isChanged.set(true);
     }
 
@@ -26,16 +24,15 @@ public class EventListenerServer implements Runnable, Listener{
     public void run() {
         while(true){
             if(isChanged.get()) {
-                isChanged.set(false);
                 try {
                     for (Joueur j : listJoueurs) {
-                        if (j.id != id) {
+                        if (j.id != data.getInt("id")) {
                             PrintWriter pw = new PrintWriter(new OutputStreamWriter(j.socket.getOutputStream()));
-                            pw.println("position " + id + " " + x + " " + y);
+                            pw.println(this.data.toString());
                             pw.flush();
-                        } else
-                            System.out.println("modif pour ts les joueurs sauf :" + id + " " + x + " " + y);
+                        }
                     }
+                    isChanged.set(false);
                 } catch (Exception e) {
                     System.err.println("Erreur sérieuse : " + e);
                     e.printStackTrace();

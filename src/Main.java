@@ -16,6 +16,7 @@ public class Main extends PApplet implements ControlListener {
     private Client client;
     public Thread thread;
     public Thread threadEventEntrant;
+    boolean arret = false;
 
     public static void main(String[] args) {
       /*  CreateGameServer server = new CreateGameServer();
@@ -74,6 +75,11 @@ public class Main extends PApplet implements ControlListener {
 
         }
 
+        if (arret) {
+            new Salon(this);
+         //   noLoop();
+        }
+
     }
      public void keyPressed(){
         this.keypressed = true;
@@ -107,8 +113,9 @@ public class Main extends PApplet implements ControlListener {
                               Textfield pseudo = (Textfield) cp5.get("PSEUDO");
                               connectClient(ip.getText(), pseudo.getText());
                               String[] processingArgs = {"Salon"};
-                              PApplet.runSketch(processingArgs, new Salon());
-                              new Salon();
+                             // PApplet.runSketch(processingArgs, new Salon());
+
+                              arret = true;
                           }
                           break;
 
