@@ -1,8 +1,5 @@
-
 import controlP5.*;
 import processing.core.PApplet;
-
-import java.awt.event.MouseListener;
 import java.net.Inet4Address;
 import java.net.Socket;
 
@@ -31,10 +28,6 @@ public class Main extends PApplet implements ControlListener {
     public void setup(){
         p = new Player(this);
        // size(200, 200);
-        /*
-
-        p.events.addListener("position", eventSortant);  */
-
 
         cp5 = new ControlP5(this);
         cp5.addButton("Create Server")
@@ -133,6 +126,7 @@ public class Main extends PApplet implements ControlListener {
             //****** 2 threads pour gérer la data entrante et sortante
             eventSortant = new EventListenerSortant(socket, client.id);
             eventEntrant = new EventListenerEntrant(socket);
+            p.events.addListener("data", eventSortant);
             threadEventEntrant = new Thread(eventEntrant);
             thread = new Thread(eventSortant);
             threadEventEntrant.start();

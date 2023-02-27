@@ -32,7 +32,7 @@ public class Player implements  ConvertJson{
     @Override
     public JSONObject transform() {
         JSONObject data = new JSONObject();
-        data.setString("type", "player");
+        data.setString("type", "player_position");
         data.setFloat("positionX", position.x);
         data.setFloat("positionY", position.y);
         return data;

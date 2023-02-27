@@ -33,10 +33,14 @@ public class Joueur implements Runnable {
 	public void handle() throws IOException {
 		while(true) {
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			data = new JSONObject(in);
-			data.setInt("id", this.id);
-			System.out.println(data);
-			manager.notify("data" ,data);
+			if(in.ready()) {
+				data = new JSONObject(in);
+				data.setInt("id", this.id);
+				if (data.getString("type").equals("connectSalon"))
+					this.pseudo = data.getString("pseudo");
+				System.out.println(data);
+				manager.notify("data", data);
+			}
 		}
 	}
 	

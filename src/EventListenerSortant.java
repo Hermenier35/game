@@ -9,7 +9,7 @@ public class EventListenerSortant implements Listener, Runnable {
     protected int id;
     AtomicBoolean isChanged = new AtomicBoolean(true);
 
-    JSONObject data;
+    static JSONObject data;
 
     public EventListenerSortant(Socket socket, int id){
         this.socket = socket;

@@ -19,8 +19,10 @@ public class EventListenerEntrant implements Runnable{
         while(true) {
             try {
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                data = new JSONObject(in);
-                events.notify("data", data);
+                if(in.ready()) {
+                    data = new JSONObject(in);
+                    events.notify("data", data);
+                }
             } catch (Exception e) {
                 System.err.println("Erreur sérieuse : " + e);
                 e.printStackTrace();
