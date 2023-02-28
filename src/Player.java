@@ -2,6 +2,8 @@ import processing.core.PApplet;
 import processing.core.PVector;
 import processing.data.JSONObject;
 
+import static processing.core.PConstants.*;
+
 
 public class Player implements  ConvertJson{
     PVector position ;
@@ -21,6 +23,27 @@ public class Player implements  ConvertJson{
     void moveY(int direction){
         this.position.y +=velocity*direction;
         events.notify("data", transform());
+    }
+
+    void move(int keyCode){
+        if(keyCode == UP ){
+            this.moveY(-1);
+            //  Logger.getGlobal().info("moving up");
+        }
+        if(keyCode == DOWN){
+            this.moveY(1);
+            // Logger.getGlobal().info("moving down");
+        }
+        if(keyCode == LEFT){
+            this.moveX(-1);
+            // Logger.getGlobal().info("moving left");
+
+        }
+        if(keyCode == RIGHT){
+            this.moveX(1);
+            // Logger.getGlobal().info("moving right");
+
+        }
     }
 
     void show(){

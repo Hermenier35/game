@@ -9,5 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="core" level="project" />
     <orderEntry type="library" name="controlP5" level="project" />
+    <orderEntry type="library" name="G4P" level="project" />
+    <orderEntry type="library" name="controlP51" level="project" />
   </component>
 </module>
