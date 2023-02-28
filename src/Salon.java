@@ -1,7 +1,7 @@
 import processing.core.PApplet;
-import processing.core.PGraphics;
+import processing.data.JSONObject;
 
-public class Salon extends PApplet{
+public class Salon extends PApplet implements Listener{
     PApplet f;
 
 
@@ -12,8 +12,7 @@ public class Salon extends PApplet{
     }
 
     public void settings(){
-       // this.size(800, 600);
-       // f.clear();
+       this.size(800, 600);
     }
 
     public void setup(){
@@ -26,5 +25,8 @@ public class Salon extends PApplet{
     }
 
 
+    @Override
+    public void update(String eventType, JSONObject data) {
 
+    }
 }
