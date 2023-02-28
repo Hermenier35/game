@@ -1,5 +1,4 @@
 import g4p_controls.GButton;
-import g4p_controls.GWinData;
 import g4p_controls.GWindow;
 import processing.core.PApplet;
 

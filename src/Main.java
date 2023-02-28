@@ -1,5 +1,6 @@
 import controlP5.*;
 import processing.core.PApplet;
+
 import java.net.Inet4Address;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -26,8 +27,8 @@ public class Main extends PApplet implements ControlListener {
 
     }
     public void settings() {
-        this.fullScreen();
-      //  this.size(520, 520);
+       // this.fullScreen();
+       this.size(520, 520);
     }
     public void setup(){
         p = new Player(this);
@@ -110,10 +111,11 @@ public class Main extends PApplet implements ControlListener {
             Button button = (Button) controlEvent.getController();
             if(button.isMouseOver()){
                 if( button.getName().equals("Create Server")){
-                    //  CreateGameServer server = new CreateGameServer();
-                    //  server.execute();
-                    // connectClient("localhost", "admin");
+                    CreateGameServer server = new CreateGameServer();
+                    server.execute();
+                    connectClient("localhost", "admin");
                     System.out.println("create server on");
+                    clear = true;
                 }
                 else if(button.getName().equals("Join Server")){
                     System.out.println("join server on ");
