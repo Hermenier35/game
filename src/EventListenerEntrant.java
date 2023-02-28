@@ -8,10 +8,12 @@ public class EventListenerEntrant implements Runnable{
     Socket socket;
     JSONObject data;
     EventManager events;
+    int id;
 
-    public EventListenerEntrant(Socket socket) {
+    public EventListenerEntrant(Socket socket, int id) {
         this.socket = socket;
         events = new EventManager("data");
+        this.id = id;
     }
 
     @Override
@@ -20,13 +22,13 @@ public class EventListenerEntrant implements Runnable{
             try {
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 if(in.ready()) {
-                    data = new JSONObject(in);
-                    events.notify(data.getString("type"), data);
+                   data = new JSONObject(in);
+                   events.notify("data", data);
                 }
             } catch (Exception e) {
                 System.err.println("Erreur sérieuse : " + e);
                 e.printStackTrace();
-                System.exit(1);
+                //System.exit(1);
             }
         }
     }

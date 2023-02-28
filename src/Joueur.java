@@ -38,7 +38,6 @@ public class Joueur implements Runnable {
 				data.setInt("id", this.id);
 				if (data.getString("type").equals("connectSalon"))
 					this.pseudo = data.getString("pseudo");
-				System.out.println(data);
 				manager.notify("data", data);
 			}
 		}

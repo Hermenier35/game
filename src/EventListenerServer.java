@@ -29,7 +29,7 @@ public class EventListenerServer implements Runnable, Listener{
                     for (Joueur j : listJoueurs) {
                         if (j.id != datas.get(0).getInt("id")) {
                             PrintWriter pw = new PrintWriter(new OutputStreamWriter(j.socket.getOutputStream()));
-                            pw.println(this.datas);
+                            pw.println(this.datas.get(0));
                             pw.flush();
                         }
                     }

@@ -18,6 +18,7 @@ public class Main extends PApplet implements ControlListener {
     boolean clear = false;
     boolean start = false;
     private ArrayList<Controller> gui = new ArrayList<>();
+    private Salon salon;
 
     public static void main(String[] args) {
        // PApplet.main("Main");
@@ -51,6 +52,7 @@ public class Main extends PApplet implements ControlListener {
            for(Controller c: gui){
                c.remove();
            }
+
            start = true;
 
             clear = false;
@@ -60,7 +62,10 @@ public class Main extends PApplet implements ControlListener {
             if(this.keypressed){
                 p.move(keyCode);
             }
-
+            for(Guest g : salon.guests){
+                if(g.id!= client.id)
+                    g.player.show();
+            }
         }
 
 
@@ -77,36 +82,6 @@ public class Main extends PApplet implements ControlListener {
 
     @Override
     public void controlEvent(ControlEvent controlEvent) {
-        System.out.println(mouseX + " " + mouseY);
-      /*  if (mouseX >150 && mouseX < 340 && mouseY > 200 && mouseY < 310)
-        switch (controlEvent.getName()) {
-            case "Create Server" : CreateGameServer server = new CreateGameServer();
-                                   server.execute();
-                                   connectClient("localhost", "admin");break;
-            case "Join Server" : cp5.get("Join Server").remove();
-                                 cp5.addTextfield("IP", 150, 240, 90, 30)
-                                         .setText("Address IP");
-                                 cp5.addTextfield("PSEUDO", 250, 240, 90, 30)
-                                                 .setText("Pseudo");
-                                 cp5.addButton("Join")
-                                         .setValue(3)
-                                         .setPosition(150, 280)
-                                         .setSize(50, 30);
-                                 break;
-            case "Join" : Button b =(Button)cp5.get("Join");
-                          if(b.isMouseOver()) {
-                              Textfield ip = (Textfield) cp5.get("IP");
-                              Textfield pseudo = (Textfield) cp5.get("PSEUDO");
-                              connectClient(ip.getText(), pseudo.getText());
-                              String[] processingArgs = {"Salon"};
-                             // PApplet.runSketch(processingArgs, new Salon());
-
-                              arret = true;
-                          }
-                          break;
-
-        }*/
-        System.out.println(controlEvent.isController());
         if(controlEvent.getController() instanceof Button){
             Button button = (Button) controlEvent.getController();
             if(button.isMouseOver()){
@@ -115,6 +90,8 @@ public class Main extends PApplet implements ControlListener {
                     server.execute();
                     connectClient("localhost", "admin");
                     System.out.println("create server on");
+                    salon = new Salon(new Guest(client.id, "admin", p), this, client);
+                    eventEntrant.events.addListener("data", salon);
                     clear = true;
                 }
                 else if(button.getName().equals("Join Server")){
@@ -135,20 +112,10 @@ public class Main extends PApplet implements ControlListener {
                     if(b.isMouseOver()) {
                         Textfield ip = (Textfield) cp5.get("IP");
                         Textfield pseudo = (Textfield) cp5.get("PSEUDO");
-                      //  connectClient(ip.getText(), pseudo.getText());
-                      //  ip.remove();
-                      //  pseudo.remove();
-                       clear = true;
-
-                        /*for(Controller c : gui){
-                           c.remove();
-                        }*/
-
-
-                        String[] processingArgs = {"Salon"};
-                        // PApplet.runSketch(processingArgs, new Salon());
-
-
+                        connectClient(ip.getText(), pseudo.getText());
+                        salon = new Salon(new Guest(client.id, pseudo.getText(), new Player(this)), this, client);
+                        eventEntrant.events.addListener("data", salon);
+                        clear = true;
                     }
 
 
@@ -173,7 +140,7 @@ public class Main extends PApplet implements ControlListener {
 
             //****** 2 threads pour gérer la data entrante et sortante
             eventSortant = new EventListenerSortant(socket, client.id);
-            eventEntrant = new EventListenerEntrant(socket);
+            eventEntrant = new EventListenerEntrant(socket, client.id);
             p.events.addListener("data", eventSortant);
             threadEventEntrant = new Thread(eventEntrant);
             thread = new Thread(eventSortant);

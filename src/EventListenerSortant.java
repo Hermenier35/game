@@ -27,7 +27,6 @@ public class EventListenerSortant implements Listener, Runnable {
         while(true) {
             if (!this.data.isEmpty()){
                 try {
-                    System.out.println("fonctionnel");
                     PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
                     pw.println(this.data.get(0));
                     pw.flush();
