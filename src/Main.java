@@ -2,6 +2,7 @@ import controlP5.*;
 import processing.core.PApplet;
 import java.net.Inet4Address;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Main extends PApplet implements ControlListener {
     Player p;
@@ -13,7 +14,9 @@ public class Main extends PApplet implements ControlListener {
     private Client client;
     public Thread thread;
     public Thread threadEventEntrant;
-    boolean arret = false;
+    boolean clear = false;
+    boolean start = false;
+    private ArrayList<Controller> gui = new ArrayList<>();
 
     public static void main(String[] args) {
        // PApplet.main("Main");
@@ -23,52 +26,42 @@ public class Main extends PApplet implements ControlListener {
 
     }
     public void settings() {
-        this.size(520, 520);
+        this.fullScreen();
+      //  this.size(520, 520);
     }
     public void setup(){
         p = new Player(this);
        // size(200, 200);
 
         cp5 = new ControlP5(this);
-        cp5.addButton("Create Server")
-                .setValue(0)
-                .setPosition(150,200)
-                .setSize(200,30);
-        cp5.addButton("Join Server")
-                .setValue(1)
-                .setPosition(150,240)
-                .setSize(200, 30);
+        gui.add(cp5.addButton("Create Server")
+                .setValue(-1)
+                .setPosition(this.width/2 - 100,this.height/2-15)
+                .setSize(200,30));
+        gui.add(cp5.addButton("Join Server")
+                .setValue(-1)
+                .setPosition(this.width/2-100,this.height/2 + 25)
+                .setSize(200, 30));
     }
     public void draw(){
         background(255);
-        p.show();
-        if(this.keypressed){
-            if(keyCode == UP ){
-                this.p.moveY(-1);
-              //  Logger.getGlobal().info("moving up");
-            }
-            if(keyCode == DOWN){
-                this.p.moveY(1);
-               // Logger.getGlobal().info("moving down");
-            }
-            if(keyCode == LEFT){
-                this.p.moveX(-1);
-               // Logger.getGlobal().info("moving left");
 
-            }
-            if(keyCode == RIGHT){
-                this.p.moveX(1);
-               // Logger.getGlobal().info("moving right");
+        if(clear){
+           for(Controller c: gui){
+               c.remove();
+           }
+           start = true;
 
+            clear = false;
+        }
+        if(start){
+            p.show();
+            if(this.keypressed){
+                p.move(keyCode);
             }
-
 
         }
 
-        if (arret) {
-            new Salon(this);
-         //   noLoop();
-        }
 
     }
      public void keyPressed(){
@@ -84,7 +77,7 @@ public class Main extends PApplet implements ControlListener {
     @Override
     public void controlEvent(ControlEvent controlEvent) {
         System.out.println(mouseX + " " + mouseY);
-        if (mouseX >150 && mouseX < 340 && mouseY > 200 && mouseY < 310)
+      /*  if (mouseX >150 && mouseX < 340 && mouseY > 200 && mouseY < 310)
         switch (controlEvent.getName()) {
             case "Create Server" : CreateGameServer server = new CreateGameServer();
                                    server.execute();
@@ -111,7 +104,60 @@ public class Main extends PApplet implements ControlListener {
                           }
                           break;
 
+        }*/
+        System.out.println(controlEvent.isController());
+        if(controlEvent.getController() instanceof Button){
+            Button button = (Button) controlEvent.getController();
+            if(button.isMouseOver()){
+                if( button.getName().equals("Create Server")){
+                    //  CreateGameServer server = new CreateGameServer();
+                    //  server.execute();
+                    // connectClient("localhost", "admin");
+                    System.out.println("create server on");
+                }
+                else if(button.getName().equals("Join Server")){
+                    System.out.println("join server on ");
+                    cp5.get("Join Server").remove();
+                    gui.add(cp5.addTextfield("IP", this.width/2 - 100, this.height/2 + 25, 90, 30)
+                            .setText("Address IP"));
+                    gui.add(cp5.addTextfield("PSEUDO", this.width/2 +10, this.height/2 + 25, 90, 30)
+                            .setText("Pseudo"));
+                    gui.add(cp5.addButton("Join")
+                            .setValue(-1)
+                            .setPosition(this.width/2 - 100, this.height/2 + 65)
+                            .setSize(50, 30));
+
+                }
+                else if( button.getName().equals("Join") ){
+                    Button b =(Button)cp5.get("Join");
+                    if(b.isMouseOver()) {
+                        Textfield ip = (Textfield) cp5.get("IP");
+                        Textfield pseudo = (Textfield) cp5.get("PSEUDO");
+                      //  connectClient(ip.getText(), pseudo.getText());
+                      //  ip.remove();
+                      //  pseudo.remove();
+                       clear = true;
+
+                        /*for(Controller c : gui){
+                           c.remove();
+                        }*/
+
+
+                        String[] processingArgs = {"Salon"};
+                        // PApplet.runSketch(processingArgs, new Salon());
+
+
+                    }
+
+
+                }
+            }
+
+
+
+
         }
+
     }
 
     public void connectClient(String ip, String pseudo){
