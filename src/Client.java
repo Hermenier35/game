@@ -4,23 +4,21 @@ import java.io.*;
 import java.net.Socket;
 
 public class Client{
-
-	public static final int PORT = 1234;
 	public int id;
-	private String name;
-	private Socket socket;
-	private JSONObject data;
+	public String name;
+	public Socket socket;
 
-	public Client(Socket socket, String name){
+	public Client(String name){
 		this.name = name;
-		this.socket = socket;
 	}
 	public void lanceClient() {
 		try {
 			envoiPseudo();
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			data = new JSONObject(in);
-			System.out.println(data);
+			JSONObject data = new JSONObject(in);
+			//System.out.println("Client :" +data);
+			if(data.getString("type").equals("attribution_id"))
+				this.id = data.getInt("id");
 		} catch(Exception e) {
 			System.err.println("Erreur sérieuse : "+e);
 			e.printStackTrace(); System.exit(1);
@@ -30,6 +28,7 @@ public class Client{
 	public void envoiPseudo(){
 		try {
 			JSONObject connectSalon = new JSONObject();
+			System.out.println("envoi pseudo");
 			connectSalon.setString("type", "connectSalon");
 			connectSalon.setString("pseudo", this.name);
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));

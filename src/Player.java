@@ -16,16 +16,16 @@ public class Player implements  ConvertJson{
         this.position = new PVector(scene.width/4,scene.height/4);
         events = new EventManager("data");
     }
-    void moveX(int direction){
+    void moveX(int direction) throws InterruptedException {
         this.position.x +=velocity*direction;
         events.notify("data", transform());
     }
-    void moveY(int direction){
+    void moveY(int direction) throws InterruptedException {
         this.position.y +=velocity*direction;
         events.notify("data", transform());
     }
 
-    void move(int keyCode){
+    void move(int keyCode) throws InterruptedException {
         if(keyCode == UP ){
             this.moveY(-1);
             //  Logger.getGlobal().info("moving up");

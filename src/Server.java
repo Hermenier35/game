@@ -5,8 +5,11 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantLock;
 
 /*creer un serveur qui ecoute les connexions entrantes pour le jeu
  pour chaque nouveau joueur un thread est créé pour gérer les données entre le serveur et le joueur 
@@ -14,14 +17,16 @@ import java.util.concurrent.Executors;
 public class Server implements Runnable{
 	private final int PORT = 1234;
 	private final int NBRJOUEURMAX = 10;
-	ArrayList<Joueur> joueurs;
+	List<Joueur> joueurs;
 	EventListenerServer eventListenerServer;
 	Thread thread;
 	Executor threadspoll = Executors.newFixedThreadPool(NBRJOUEURMAX);
+	ReentrantLock reentrantLock;
 	
 	public Server() {
-		joueurs = new ArrayList<>();
+		joueurs = Collections.synchronizedList(new ArrayList<>());
 		eventListenerServer = new EventListenerServer(joueurs);
+		reentrantLock = new ReentrantLock();
 	}
 	
 	@Override
@@ -29,7 +34,7 @@ public class Server implements Runnable{
 		runServer();
 	}
 	
-	public void runServer() {
+	public synchronized void runServer() {
 	
 		try {
 			ServerSocket socketAttente = new ServerSocket(PORT);
@@ -38,12 +43,13 @@ public class Server implements Runnable{
 			
 			do {
 				Socket clientSocket = socketAttente.accept();
+				clientSocket.setTcpNoDelay(true);
 				giveId(clientSocket);
 				int id = joueurs.size();
-				Joueur joueur = new Joueur(id, clientSocket);
+				Joueur joueur = new Joueur(id, clientSocket, reentrantLock);
 				threadspoll.execute(joueur);
-				joueur.manager.addListener("data", eventListenerServer);
 				joueurs.add(joueur);
+				joueur.manager.addListener("data", eventListenerServer);
 			}while(joueurs.size() < NBRJOUEURMAX);
 		}catch(Exception e){
 			System.err.println("Erreur: " + e); 

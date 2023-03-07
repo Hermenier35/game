@@ -8,17 +8,15 @@ import java.util.List;
 
 public class EventListenerSortant implements Listener, Runnable {
     protected Socket socket;
-    protected int id;
 
-    public static List<JSONObject> data;
+    public List<JSONObject> data;
 
-    public EventListenerSortant(Socket socket, int id){
+    public EventListenerSortant(Socket socket){
         this.socket = socket;
-        this.id = id;
-        this.data = Collections.synchronizedList( new LinkedList<JSONObject>());
+        this.data = Collections.synchronizedList( new LinkedList<>());
     }
     @Override
-    public void update(String eventType, JSONObject data) {
+    public void  update(String eventType, JSONObject data) {
         this.data.add(data);
     }
 

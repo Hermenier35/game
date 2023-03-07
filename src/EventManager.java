@@ -23,7 +23,7 @@ public class EventManager {
         users.remove(listener);
     }
 
-    public void notify(String eventType, JSONObject data) {
+    public void notify(String eventType, JSONObject data) throws InterruptedException {
         List<Listener> users = listeners.get(eventType);
         for (Listener listener : users) {
             listener.update(eventType, data);

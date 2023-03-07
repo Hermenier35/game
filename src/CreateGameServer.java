@@ -1,12 +1,9 @@
 
 public class CreateGameServer {
-
-	private Server server;
 	Thread thread;
 	
 	public CreateGameServer() {
-		this.server = new Server();
-		this.thread = new Thread(server);
+		this.thread = new Thread(new Server());
 	}
 	
 	public void execute() {
