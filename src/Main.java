@@ -1,5 +1,9 @@
-import controlP5.*;
+import controlP5.Button;
+import controlP5.ControlP5;
+import controlP5.Textfield;
 import processing.core.PApplet;
+import processing.core.PGraphics;
+import processing.core.PImage;
 import java.net.Inet4Address;
 import java.net.Socket;
 
@@ -14,10 +18,12 @@ public class Main extends PApplet{
     private EventListenerEntrant eventEntrant;
     private Socket socket;
     private Client client;
-    public Thread thread;
+    public Thread threadEventSortant;
     public Thread threadEventEntrant;
     private boolean cleanLaunch = false;
     private Salon salon;
+    private Game game;
+    private PGraphics pg;
 
     public static void main(String[] args) {
         String[] processingArgs = {"Main"};
@@ -25,6 +31,7 @@ public class Main extends PApplet{
         PApplet.runSketch(processingArgs, main);
     }
     public void setup(){
+        surface.setResizable(true);
         cp5 = new ControlP5(this);
         cp5.addButton("Create Server")
                 .setValue(-1)
@@ -51,6 +58,8 @@ public class Main extends PApplet{
             case LAUNCHER: initScreen();break;
             case SALON:salonScreen();
                 salon.draw();
+                if(client.startGame)
+                    initGameScreen();
                 break;
             case GAME:gameScreen();break;
             default: exit();
@@ -63,33 +72,38 @@ public class Main extends PApplet{
         Button join = (Button) cp5.get("Join");
         Button create = (Button) cp5.get("Create Server");
 
-        if(join.isMouseOver()){
-            Textfield ip = (Textfield) cp5.get("IP");
-            Textfield pseudo = (Textfield) cp5.get("PSEUDO");
-            this.client = new Client(pseudo.getText());
-            connectClient(ip.getText(), pseudo.getText(), client);
-            salon = new Salon(new Guest(pseudo.getText()), client, cp5, this);
-            eventEntrant.events.addListener("data", salon);
-            System.out.println("deb");
-            initSalon();
-            System.out.println("mid");
-            startSalon();
-            System.out.println("fin");
+        if(gameScreen==LAUNCHER) {
+            if (join.isMouseOver()) {
+                Textfield ip = (Textfield) cp5.get("IP");
+                Textfield pseudo = (Textfield) cp5.get("PSEUDO");
+                this.client = new Client(pseudo.getText());
+                connectClient(ip.getText(), pseudo.getText(), client);
+                salon = new Salon(new Guest(pseudo.getText()), client, cp5, this);
+                eventEntrant.events.addListener("data", salon);
+                initSalon();
+                startSalon();
+            }
+
+            if (create.isMouseOver()) {
+                CreateGameServer server = new CreateGameServer();
+                server.execute();
+                this.client = new Client("admin");
+                connectClient("localhost", "admin", client);
+                System.out.println("create server on");
+                salon = new Salon(new Guest("admin"), client, cp5, this);
+                eventEntrant.events.addListener("data", salon);
+                initSalon();
+                startSalon();
+            }
         }
 
-        if(create.isMouseOver()){
-            CreateGameServer server = new CreateGameServer();
-            server.execute();
-            this.client = new Client("admin");
-            connectClient("localhost", "admin", client);
-            System.out.println("create server on");
-            salon = new Salon(new Guest("admin"), client, cp5, this);
-            eventEntrant.events.addListener("data", salon);
-            System.out.println("deb");
-            initSalon();
-            System.out.println("mid");
-            startSalon();
-            System.out.println("fin");
+        if(gameScreen==SALON && client.name.equals("admin")){
+            Button startGame = (Button) cp5.get("startGame");
+            if(startGame.isMouseOver()){
+                client.sendStartGame();
+                initGameScreen();
+                System.out.println("startGame");
+            }
         }
 
     }
@@ -109,7 +123,7 @@ public class Main extends PApplet{
             eventSortant = new EventListenerSortant(socket);
             eventEntrant = new EventListenerEntrant(socket);
             threadEventEntrant = new Thread(eventEntrant);
-            thread = new Thread(eventSortant);
+            threadEventSortant = new Thread(eventSortant);
         }catch (Exception e){
             System.err.println("Erreur sérieuse : "+e);
             e.printStackTrace(); System.exit(1);
@@ -133,7 +147,7 @@ public class Main extends PApplet{
         salon.setup();
         client.lanceClient();
         threadEventEntrant.start();
-        thread.start();
+        threadEventSortant.start();
         salon.hote.id = client.id;
         System.out.println("test");
         //cp5.setVisible(true);
@@ -143,8 +157,24 @@ public class Main extends PApplet{
         surface.setTitle("Salon");
     }
     private void gameScreen() {
+        game.draw();
     }
     private void startSalon(){
         gameScreen=SALON;
+    }
+
+    private void initGameScreen(){
+        pg = createGraphics(4000,4000);
+        if(client.name.equals("admin"))
+            cp5.remove("startGame");
+        //PImage image = loadImage("graphic/map.png");
+        //image.setLoaded();
+        //image(image,0,0);
+        salon.cleanSalon();
+        game = new Game(salon.guests, client, this, salon.hote, cp5);
+        game.setup();
+        eventEntrant.events.removeListener("data", salon);
+        eventEntrant.events.addListener("data", game);
+        gameScreen=GAME;
     }
 }

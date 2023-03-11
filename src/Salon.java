@@ -1,4 +1,6 @@
-import controlP5.*;
+
+import controlP5.ControlP5;
+import controlP5.Textarea;
 import processing.core.PApplet;
 import processing.data.JSONObject;
 
@@ -17,21 +19,20 @@ public class Salon implements Listener{
     Guest hote;
     ControlP5 cp5;
     List<JSONObject> datas;
+    List<Textarea> drawGuests;
     int position = 80;
     public Salon(Guest hote, Client client, ControlP5 cp5, PApplet pApplet) {
         guests = new ArrayList<>();
         this.hote = hote;
-        guests.add(hote);
         this.client = client;
         this.cp5 = cp5;
         this.pApplet = pApplet;
         this.datas = Collections.synchronizedList( new LinkedList<>());
-    }
-
-    public void settings(){;
+        this.drawGuests = new ArrayList<>();
     }
 
     public void setup(){
+        guests.add(hote);
         pApplet.background(0);
         pApplet.textSize(18);
         pApplet.textAlign(pApplet.RIGHT);
@@ -42,7 +43,12 @@ public class Salon implements Listener{
         pApplet.text("RACE", 320, 50);
         pApplet.rect(100, 70, 300, 400, 30);
         createRowsGuest(hote.pseudo);
-        System.out.println("setup " + Thread.currentThread().getName());
+        if(hote.pseudo.equals("admin")){
+            cp5.addButton("startGame")
+                    .setPosition(this.pApplet.width/2 - 25, 480)
+                    .setSize(50, 30)
+                    .setColorBackground(pApplet.color(0, 204, 0));
+        }
     }
 
     public void draw(){
@@ -66,14 +72,10 @@ public class Salon implements Listener{
             System.out.println("total joueur dans le salon :" + guests.size());
             client.envoiPseudo();
         }
-    }
 
-    public Guest getGuest(int id){
-        for(Guest g:guests){
-            if(g.id==id)
-                return g;
+        if(data.getString("type").equals("startGame")){
+            client.startGame = true;
         }
-        return null;
     }
 
     public boolean containsGuest(int id){
@@ -87,18 +89,24 @@ public class Salon implements Listener{
         return false;
     }
     private synchronized void createRowsGuest(String pseudo){
-        System.out.println( "createRow : " + Thread.currentThread().getName());
-        cp5.addTextarea(pseudo)
+        Textarea guest = new Textarea(cp5, pseudo);
+        guest.setColor(0);
+        guest.setText(pseudo);
+        guest.setFont(pApplet.createFont("Lucida Sans", 18));
+        guest.setPosition(120, position);
+        drawGuests.add(guest);
+        /*cp5.addTextarea(pseudo)
                 .setText(pseudo)
                 .setColor(0)
                 .setFont(pApplet.createFont("Lucida Sans", 18))
-                .setPosition(120,position);
-       /* cp5.addListBox("couleur :" + pseudo)
-                .setPosition(200, position+10)
-                .addItems(tabCouleur)
-                .setSize(80,50)
-                .setOpen(false);
-        System.out.println("position :" + position);*/
+                .setPosition(120,position);*/
+
         this.position+=20;
+    }
+
+    public void cleanSalon(){
+        for(Textarea g : drawGuests){
+            g.remove();
+        }
     }
 }

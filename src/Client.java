@@ -7,9 +7,11 @@ public class Client{
 	public int id;
 	public String name;
 	public Socket socket;
+	public boolean startGame;
 
 	public Client(String name){
 		this.name = name;
+		this.startGame = false;
 	}
 	public void lanceClient() {
 		try {
@@ -37,6 +39,20 @@ public class Client{
 		}catch(Exception e) {
 			System.err.println("Erreur sérieuse : "+e);
 			e.printStackTrace(); System.exit(1);
+		}
+	}
+
+	public void sendStartGame(){
+		try {
+			JSONObject startGame = new JSONObject();
+			startGame.setString("type", "startGame");
+			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+			pw.println(startGame);
+			pw.flush();
+		}catch (Exception e){
+			System.err.println("Erreur send startGame : " + e);
+			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 }
