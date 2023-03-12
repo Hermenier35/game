@@ -61,7 +61,13 @@ public class Main extends PApplet{
                 if(client.startGame)
                     initGameScreen();
                 break;
-            case GAME:gameScreen();break;
+            case GAME:
+                try {
+                    gameScreen();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
             default: exit();
         }
 
@@ -156,7 +162,7 @@ public class Main extends PApplet{
         // codes of salon screen
         surface.setTitle("Salon");
     }
-    private void gameScreen() {
+    private void gameScreen() throws InterruptedException {
         game.draw();
     }
     private void startSalon(){
