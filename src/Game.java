@@ -52,7 +52,8 @@ public class Game implements Listener {
         jeep = new Jeep(0,0,10,new PVector(200,20),20,10,0.1F,this.pApplet,map, new EventManager(), camera);
         jeep.setup();
         jeep.setImagePosition(348.388F);
-        jeep.setFocus(new PVector(100, 200));
+        myUnity.add(jeep);
+        //jeep.setFocus(new PVector(100, 200));
     }
 
     @Override
@@ -64,6 +65,7 @@ public class Game implements Listener {
         camera();
         pApplet.image(map, camera.x, camera.y);
         drawSelect();
+        actionMouse();
         jeep.draw();
     }
 
@@ -110,12 +112,12 @@ public class Game implements Listener {
     }
 
     public void drawSelect(){
-        if(pApplet.mousePressed && !mouseAction){
+        if(pApplet.mousePressed && pApplet.mouseButton==pApplet.LEFT && !mouseAction){
             cornerX = pApplet.mouseX;
             cornerY = pApplet.mouseY;
             mouseAction = true;
         }
-        if(pApplet.mousePressed && mouseAction){
+        if(pApplet.mousePressed && mouseAction && pApplet.mouseButton == pApplet.LEFT){
             //pApplet.rect(cornerX, cornerY, pApplet.mouseX, pApplet.mouseY);
             rectangle = pApplet.createShape(PConstants.RECT,cornerX, cornerY, pApplet.mouseX, pApplet.mouseY);
             pApplet.shape(rectangle);
@@ -132,6 +134,16 @@ public class Game implements Listener {
                unity.position.y >= y && unity.position.y <= opositeY ){
                 unity.setSelected(true);
                 selectedUnity.add(unity);
+            }
+        }
+    }
+
+    public void actionMouse(){
+        if(pApplet.mousePressed && pApplet.mouseButton == pApplet.RIGHT){
+            if(selectedUnity.size()>0){
+                for(MovibleEntity unity : selectedUnity){
+                    unity.setFocus(new PVector(pApplet.mouseX-camera.x, pApplet.mouseY-camera.y));
+                }
             }
         }
     }
