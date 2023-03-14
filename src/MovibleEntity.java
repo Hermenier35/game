@@ -9,13 +9,16 @@ public abstract class MovibleEntity implements ConvertJson{
     protected PVector position , focus;
     protected int dmgAttack;
     protected float fireRate;
-    protected int speedMovement;
+    protected float speedMovement;
     protected PApplet p;
     protected PImage map;
     protected EventManager event;
     protected  float velocity = 10f;
+    protected PImage imagePosition;
+    protected PVector camera;
+    protected boolean isSelected;
 
-    public MovibleEntity(int idTeams, int idType, int life, PVector position, int dmgAttack, float fireRate, int speedMovement, PApplet p, PImage map, EventManager event) {
+    public MovibleEntity(int idTeams, int idType, int life, PVector position, int dmgAttack, float fireRate, float speedMovement, PApplet p, PImage map, EventManager event, PVector camera) {
         this.idTeams = idTeams;
         this.idType = idType;
         this.life = life;
@@ -27,6 +30,8 @@ public abstract class MovibleEntity implements ConvertJson{
         this.map = map;
         this.event = event;
         this.focus = new PVector();
+        this.camera = camera;
+        this.isSelected = false;
     }
 
     public abstract void draw() throws InterruptedException;
@@ -36,24 +41,26 @@ public abstract class MovibleEntity implements ConvertJson{
             if (position.x < focus.x)
                 moveX(1);
             else
-                moveY(-1);
+                moveX(-1);
+            //this.map.set((int) this.position.x+100, (int) this.position.y+200,imagePosition);
         }
         if(position.y != focus.y){
             if(position.y < focus.y)
                 moveY(1);
             else
                 moveY(-1);
+            //this.map.set((int) this.position.x+100, (int) this.position.y+200,imagePosition);
         }
     }
 
 
     void moveX(int direction) throws InterruptedException {
-        this.position.x +=velocity*direction;
-        event.notify("data", transform());
+        this.position.x +=velocity*direction * speedMovement;
+        //event.notify("data", transform());
     }
     void moveY(int direction) throws InterruptedException {
-        this.position.y +=velocity*direction;
-        event.notify("data", transform());
+        this.position.y +=velocity*direction * speedMovement;
+        //event.notify("data", transform());
     }
 
     public int getIdTeams() {
@@ -80,7 +87,7 @@ public abstract class MovibleEntity implements ConvertJson{
         return fireRate;
     }
 
-    public int getSpeedMovement() {
+    public float getSpeedMovement() {
         return speedMovement;
     }
 
@@ -110,5 +117,21 @@ public abstract class MovibleEntity implements ConvertJson{
 
     public void setSpeedMovement(int speedMovement) {
         this.speedMovement = speedMovement;
+    }
+
+    public PVector getFocus() {
+        return focus;
+    }
+
+    public void setFocus(PVector focus) {
+        this.focus = focus;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

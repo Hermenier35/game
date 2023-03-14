@@ -31,7 +31,6 @@ public class Main extends PApplet{
         PApplet.runSketch(processingArgs, main);
     }
     public void setup(){
-        surface.setResizable(true);
         cp5 = new ControlP5(this);
         cp5.addButton("Create Server")
                 .setValue(-1)
@@ -48,7 +47,7 @@ public class Main extends PApplet{
     }
 
     public void settings(){
-        this.size(520, 520);
+        this.size(800, 600);
     }
     public void draw(){
 

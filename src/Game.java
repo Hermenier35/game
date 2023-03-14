@@ -3,10 +3,8 @@ import processing.core.*;
 import processing.data.JSONObject;
 
 import java.awt.*;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 public class Game implements Listener {
     public final int MAX_WIDTH = 4000, MAX_HEIGHT = 4000;
@@ -23,6 +21,9 @@ public class Game implements Listener {
     int cornerY = 0;
     PShape rectangle;
     Jeep jeep;
+    Set<MovibleEntity> selectedUnity;
+    Set<MovibleEntity> myUnity;
+    Set<MovibleEntity> enemiUnity;
 
     public Game(List<Guest> guests, Client client, PApplet pApplet, Guest hote, ControlP5 cp5) {
         this.guests = guests;
@@ -33,6 +34,9 @@ public class Game implements Listener {
         this.datas = Collections.synchronizedList(new LinkedList<>());
         this.camera = new PVector(0,0);
         this.mouseAction = false;
+        this.selectedUnity = new HashSet();
+        this.myUnity = new HashSet<>();
+        this.enemiUnity = new HashSet<>();
     }
 
     public void setup(){
@@ -45,9 +49,10 @@ public class Game implements Listener {
         map();
         pApplet.rectMode(pApplet.CORNERS);
         pApplet.fill(pApplet.color(15,176,245), 50);
-        jeep = new Jeep(0,0,10,new PVector(10,20),20,10,5,this.pApplet,map, new EventManager());
+        jeep = new Jeep(0,0,10,new PVector(200,20),20,10,0.1F,this.pApplet,map, new EventManager(), camera);
         jeep.setup();
         jeep.setImagePosition(348.388F);
+        jeep.setFocus(new PVector(100, 200));
     }
 
     @Override
@@ -57,20 +62,18 @@ public class Game implements Listener {
 
     public void draw() throws InterruptedException {
         camera();
+        pApplet.image(map, camera.x, camera.y);
         drawSelect();
         jeep.draw();
     }
 
     public void camera(){
         if(pApplet.mouseX> pApplet.width-40 && camera.x > -3500) {
-            System.out.println(camera.x);
             camera.x -=pApplet.mouseX - pApplet.width + 40;
             pApplet.image(map, camera.x, camera.y);
-
         }
 
         if(pApplet.mouseX < 40 && camera.x < -20) {
-            System.out.println(camera.x);
             camera.x += 40-pApplet.mouseX;
             pApplet.image(map, camera.x, camera.y);
         }
@@ -81,7 +84,6 @@ public class Game implements Listener {
         }
 
         if(pApplet.mouseY < 40 && camera.y < -20){
-            System.out.println(camera.y);
             camera.y += 40 - pApplet.mouseY;
             pApplet.image(map, camera.x, camera.y);
         }
@@ -89,6 +91,7 @@ public class Game implements Listener {
 
     public void map(){
         map = pApplet.createImage(MAX_WIDTH, MAX_HEIGHT, pApplet.RGB);
+        //this.pApplet.translate();
         map.loadPixels();
         Random r = new Random();
         for(int i = 0; i < MAX_HEIGHT; i+=20){
@@ -115,10 +118,21 @@ public class Game implements Listener {
         if(pApplet.mousePressed && mouseAction){
             //pApplet.rect(cornerX, cornerY, pApplet.mouseX, pApplet.mouseY);
             rectangle = pApplet.createShape(PConstants.RECT,cornerX, cornerY, pApplet.mouseX, pApplet.mouseY);
+            pApplet.shape(rectangle);
         }
         if(!pApplet.mousePressed && mouseAction){
-            pApplet.shape(rectangle);
+            recoverSelectUnits(cornerX, cornerY, pApplet.mouseX, pApplet.pmouseY);
             mouseAction = false;
+        }
+    }
+
+    public void recoverSelectUnits(int x, int y, int opositeX, int opositeY){
+        for(MovibleEntity unity : myUnity){
+            if(unity.position.x >= x && unity.position.x <= opositeX &&
+               unity.position.y >= y && unity.position.y <= opositeY ){
+                unity.setSelected(true);
+                selectedUnity.add(unity);
+            }
         }
     }
 }
