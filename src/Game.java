@@ -17,8 +17,8 @@ public class Game implements Listener {
     PImage map, or, herbe, rock;
     PVector camera;
     boolean mouseAction;
-    int cornerX = 0;
-    int cornerY = 0;
+    float cornerX = 0;
+    float cornerY = 0;
     PShape rectangle;
     Jeep jeep;
     Set<MovibleEntity> selectedUnity;
@@ -49,7 +49,7 @@ public class Game implements Listener {
         map();
         pApplet.rectMode(pApplet.CORNERS);
         pApplet.fill(pApplet.color(15,176,245), 50);
-        jeep = new Jeep(0,0,10,new PVector(200,20),20,10,0.1F,this.pApplet,map, new EventManager(), camera);
+        jeep = new Jeep(0,0,10,new PVector(200,100),20,10,0.1F,this.pApplet,map, new EventManager(), camera);
         jeep.setup();
         jeep.setImagePosition(348.388F);
         myUnity.add(jeep);
@@ -123,12 +123,12 @@ public class Game implements Listener {
             pApplet.shape(rectangle);
         }
         if(!pApplet.mousePressed && mouseAction){
-            recoverSelectUnits(cornerX, cornerY, pApplet.mouseX, pApplet.pmouseY);
+            recoverSelectUnits(cornerX - camera.x, cornerY - camera.y, pApplet.mouseX - camera.x, pApplet.pmouseY - camera.y);
             mouseAction = false;
         }
     }
 
-    public void recoverSelectUnits(int x, int y, int opositeX, int opositeY){
+    public void recoverSelectUnits(float x, float y, float opositeX, float opositeY){
         for(MovibleEntity unity : myUnity){
             if(unity.position.x >= x && unity.position.x <= opositeX &&
                unity.position.y >= y && unity.position.y <= opositeY ){

@@ -52,7 +52,7 @@ public class Jeep extends MovibleEntity{
     public float calculDegree(){
         PVector vector = new PVector( position.x, 0);
         vector.normalize();
-        PVector vect = new PVector(focus.x + camera.x - position.x, focus.y + camera.y-position.y);
+        PVector vect = new PVector(focus.x - position.x, focus.y - position.y);
         vect.normalize();
         float degree = p.degrees(PVector.angleBetween(vect, vector));
         if(focus.y >= position.y)
