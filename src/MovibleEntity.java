@@ -37,30 +37,15 @@ public abstract class MovibleEntity implements ConvertJson{
     public abstract void draw() throws InterruptedException;
     public abstract void setup();
     public void deplacement() throws InterruptedException {
-        if(position.x != focus.x) {
-            if (position.x < focus.x)
-                moveX(1);
-            else
-                moveX(-1);
-            //this.map.set((int) this.position.x+100, (int) this.position.y+200,imagePosition);
-        }
-        if(position.y != focus.y){
-            if(position.y < focus.y)
-                moveY(1);
-            else
-                moveY(-1);
-            //this.map.set((int) this.position.x+100, (int) this.position.y+200,imagePosition);
+        if(!goalAchieved()) {
+            PVector vector = new PVector( focus.x - position.x, focus.y - position.y);
+            vector.normalize();
+            position.add(vector);
         }
     }
 
-
-    void moveX(int direction) throws InterruptedException {
-        this.position.x +=velocity*direction * speedMovement;
-        //event.notify("data", transform());
-    }
-    void moveY(int direction) throws InterruptedException {
-        this.position.y +=velocity*direction * speedMovement;
-        //event.notify("data", transform());
+    private boolean goalAchieved(){
+        return Math.abs(position.x - focus.x) + Math.abs(position.y- focus.y) < 2;
     }
 
     public int getIdTeams() {

@@ -146,5 +146,9 @@ public class Game implements Listener {
                 }
             }
         }
+
+        if(pApplet.mousePressed && pApplet.mouseButton == pApplet.LEFT){
+            selectedUnity.clear();
+        }
     }
 }

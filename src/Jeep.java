@@ -16,11 +16,9 @@ public class Jeep extends MovibleEntity{
 
     @Override
     public void draw() throws InterruptedException {
-        //this.p.image(imagePosition, this.position.x, this.position.y);
         deplacement();
-        this.p.image(imagePosition, this.position.x + this.camera.x,this.position.y + this.camera.y);
-        //System.out.println("x : " + this.p.mouseX + "  y: " + this.p.mouseY);
-        //System.out.println("degree : " + calculDegree());
+        setImagePosition(calculDegree());
+        this.p.image(imagePosition, this.position.x + this.camera.x - 23,this.position.y + this.camera.y - 21);
     }
 
     @Override
@@ -32,12 +30,17 @@ public class Jeep extends MovibleEntity{
         int x = 0;
         for (float degree = 360; degree >= 0; degree-=11.612){
             imagePositions.put(degree, sprite.loadPosition(x,0,46,43));
-            x+=46;
+            x+=48;
         }
     }
 
     public void setImagePosition(float degree){
-        imagePosition = imagePositions.get(degree);
+        Float key = 0f;
+        for(Float deg : imagePositions.keySet()){
+            if(Math.abs(deg- degree) < 7)
+                key = deg;
+        }
+        imagePosition = imagePositions.get(key);
         imagePosition.loadPixels();
     }
 
@@ -47,6 +50,14 @@ public class Jeep extends MovibleEntity{
     }
 
     public float calculDegree(){
-       return this.position.angleBetween(position, focus);
+        PVector vector = new PVector( position.x, 0);
+        vector.normalize();
+        PVector vect = new PVector(focus.x + camera.x - position.x, focus.y + camera.y-position.y);
+        vect.normalize();
+        float degree = p.degrees(PVector.angleBetween(vect, vector));
+        if(focus.y >= position.y)
+            return 360 - degree;
+        else
+            return degree;
     }
 }
