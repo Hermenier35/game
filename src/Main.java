@@ -146,8 +146,7 @@ public class Main extends PApplet{
         cp5.remove("Join");
         cp5.remove("IP");
         cp5.remove("PSEUDO");
-        //cp5 = new ControlP5(this);
-        //cp5.setVisible(false);
+
         System.out.println(Thread.currentThread().getName());
         salon.setup();
         client.lanceClient();
@@ -172,11 +171,9 @@ public class Main extends PApplet{
         pg = createGraphics(4000,4000);
         if(client.name.equals("admin"))
             cp5.remove("startGame");
-        //PImage image = loadImage("graphic/map.png");
-        //image.setLoaded();
-        //image(image,0,0);
+
         salon.cleanSalon();
-        game = new Game(salon.guests, client, this, salon.hote, cp5);
+        game = new Game(salon.guests, client, this, salon.hote, cp5, eventSortant);
         game.setup();
         eventEntrant.events.removeListener("data", salon);
         eventEntrant.events.addListener("data", game);

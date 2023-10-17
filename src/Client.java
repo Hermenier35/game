@@ -18,7 +18,7 @@ public class Client{
 			envoiPseudo();
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			JSONObject data = new JSONObject(in);
-			//System.out.println("Client :" +data);
+			System.out.println("Client :" +data);
 			if(data.getString("type").equals("attribution_id"))
 				this.id = data.getInt("id");
 		} catch(Exception e) {
@@ -31,10 +31,11 @@ public class Client{
 		try {
 			JSONObject connectSalon = new JSONObject();
 			System.out.println("envoi pseudo");
-			connectSalon.setString("type", "connectSalon");
-			connectSalon.setString("pseudo", this.name);
+			connectSalon.put("type", "connectSalon");
+			connectSalon.put("pseudo", this.name);
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 			pw.println(connectSalon);
+			System.out.println("envoi pseudo :" + connectSalon);
 			pw.flush();
 		}catch(Exception e) {
 			System.err.println("Erreur sérieuse : "+e);

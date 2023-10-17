@@ -13,13 +13,11 @@ public class Joueur implements Runnable {
 	String pseudo;
 	Socket socket;
 	EventManager manager;
-	ReentrantLock reentrantLock;
 	
-	public Joueur(int id, Socket socket, ReentrantLock reentrantLock) {
+	public Joueur(int id, Socket socket) {
 		this.id = id;
 		this.socket = socket;
 		manager = new EventManager("data");
-		this.reentrantLock = reentrantLock;
 	}
 
 	@Override
@@ -31,26 +29,36 @@ public class Joueur implements Runnable {
 		}
 		
 	}
+
+	private boolean concatData(BufferedReader in){
+		try {
+			String rep = in.readLine();
+			while(!rep.endsWith("}"))
+				rep+=in.readLine();
+			data = JSONObject.parse(rep);
+			System.out.println("that rep :"+ rep);
+			return true;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 	
 	public void handle() throws IOException {
 		while(true) {
-			reentrantLock.lock();
 			try {
 				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				if(in.ready()) {
-					data = new JSONObject(in);
+				if(concatData(in)){
 					data.setInt("id", this.id);
 					if (data.getString("type").equals("connectSalon")) {
 						this.pseudo = data.getString("pseudo");
 					}
 					//System.out.println("joueur :" + data);
 					manager.notify("data", data);
+
 				}
 			}catch(Exception e){
 				throw new RuntimeException(e);
-			}finally {
-				reentrantLock.unlock();
 			}
 		}
 	}

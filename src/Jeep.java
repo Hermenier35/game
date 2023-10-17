@@ -46,13 +46,19 @@ public class Jeep extends MovibleEntity{
 
     @Override
     public JSONObject transform() {
-        return null;
+        JSONObject data = new JSONObject();
+        data.setString("type", "unity_focus");
+        data.setInt("IdTeam", this.idTeam);
+        data.setInt("IdType", this.idType);
+        data.setFloat("focusX", focus.x);
+        data.setFloat("focusY", focus.y);
+        return data;
     }
 
     public float calculDegree(){
         PVector vector = new PVector( position.x, 0);
-        vector.normalize();
         PVector vect = new PVector(focus.x - position.x, focus.y - position.y);
+        vector.normalize();
         vect.normalize();
         float degree = p.degrees(PVector.angleBetween(vect, vector));
         if(focus.y >= position.y)

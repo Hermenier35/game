@@ -27,6 +27,7 @@ public class EventListenerSortant implements Listener, Runnable {
                 try {
                     PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
                     pw.println(this.data.get(0));
+                    System.out.println("pw :" + data.get(0));
                     pw.flush();
                     data.remove(0);
                 } catch (Exception e) {

@@ -24,8 +24,9 @@ public class Game implements Listener {
     Set<MovibleEntity> selectedUnity;
     Set<MovibleEntity> myUnity;
     Set<MovibleEntity> enemiUnity;
+    EventListenerSortant eventsSortant;
 
-    public Game(List<Guest> guests, Client client, PApplet pApplet, Guest hote, ControlP5 cp5) {
+    public Game(List<Guest> guests, Client client, PApplet pApplet, Guest hote, ControlP5 cp5, EventListenerSortant eventsSortant) {
         this.guests = guests;
         this.client = client;
         this.pApplet = pApplet;
@@ -37,9 +38,11 @@ public class Game implements Listener {
         this.selectedUnity = new HashSet();
         this.myUnity = new HashSet<>();
         this.enemiUnity = new HashSet<>();
+        this.eventsSortant = eventsSortant;
     }
 
     public void setup(){
+        EventManager manager = new EventManager("data");
         this.or = pApplet.loadImage("graphic/or.jpg");
         or.setLoaded();
         this.herbe = pApplet.loadImage("graphic/herbe.jpg");
@@ -49,16 +52,22 @@ public class Game implements Listener {
         map();
         pApplet.rectMode(pApplet.CORNERS);
         pApplet.fill(pApplet.color(15,176,245), 50);
-        jeep = new Jeep(0,0,10,new PVector(200,100),20,10,0.1F,this.pApplet,map, new EventManager(), camera);
+        jeep = new Jeep(0,0,10,new PVector(200,100),20,10,0.1F,this.pApplet,map, manager, camera);
         jeep.setup();
-        jeep.setImagePosition(348.388F);
-        myUnity.add(jeep);
+        testMovibleEntity(0, jeep);
+        jeep.event.addListener("data", eventsSortant);
         //jeep.setFocus(new PVector(100, 200));
     }
 
     @Override
     public void update(String eventType, JSONObject data) throws InterruptedException {
-
+        if(data.getString("type").equals("unity_focus")){
+            int idTeam = data.getInt("IdTeam");
+            int idType = data.getInt("IdType");
+            float focusX = data.getFloat("focusX");
+            float focusY = data.getFloat("focusY");
+            updateUnity(idTeam, idType, focusX, focusY);
+        }
     }
 
     public void draw() throws InterruptedException {
@@ -66,7 +75,8 @@ public class Game implements Listener {
         pApplet.image(map, camera.x, camera.y);
         drawSelect();
         actionMouse();
-        jeep.draw();
+        drawAllUnity(myUnity);
+        drawAllUnity(enemiUnity);
     }
 
     public void camera(){
@@ -118,7 +128,6 @@ public class Game implements Listener {
             mouseAction = true;
         }
         if(pApplet.mousePressed && mouseAction && pApplet.mouseButton == pApplet.LEFT){
-            //pApplet.rect(cornerX, cornerY, pApplet.mouseX, pApplet.mouseY);
             rectangle = pApplet.createShape(PConstants.RECT,cornerX, cornerY, pApplet.mouseX, pApplet.mouseY);
             pApplet.shape(rectangle);
         }
@@ -139,16 +148,46 @@ public class Game implements Listener {
     }
 
     public void actionMouse(){
-        if(pApplet.mousePressed && pApplet.mouseButton == pApplet.RIGHT){
+        if(pApplet.mousePressed && pApplet.mouseButton == pApplet.RIGHT && !mouseAction){
+            mouseAction = true;
             if(selectedUnity.size()>0){
                 for(MovibleEntity unity : selectedUnity){
                     unity.setFocus(new PVector(pApplet.mouseX-camera.x, pApplet.mouseY-camera.y));
                 }
             }
         }
+        if(!pApplet.mousePressed)
+            mouseAction = false;
 
-        if(pApplet.mousePressed && pApplet.mouseButton == pApplet.LEFT){
+        if(pApplet.mousePressed && pApplet.mouseButton == pApplet.LEFT && !mouseAction)
             selectedUnity.clear();
+    }
+
+    public void updateUnity(int idTeam, int idType, float focusX, float focusY){
+        if(idTeam!=this.hote.id){
+            boolean isUpdate = false;
+            Iterator<MovibleEntity> ite = enemiUnity.iterator();
+            while(ite.hasNext() && !isUpdate){
+                MovibleEntity entity = ite.next();
+                if(entity.idTeam == idTeam && entity.idType == idType){
+                    entity.focus.x = focusX;
+                    entity.focus.y = focusY;
+                    isUpdate = true;
+                }
+            }
         }
+    }
+
+    public void testMovibleEntity(int idTeam, MovibleEntity entity){
+        if(this.hote.id == idTeam)
+            myUnity.add(entity);
+        else
+            enemiUnity.add(entity);
+    }
+
+    public void drawAllUnity(Set<MovibleEntity> entities) throws InterruptedException {
+        Iterator<MovibleEntity> ite = entities.iterator();
+        while(ite.hasNext())
+            ite.next().draw();
     }
 }

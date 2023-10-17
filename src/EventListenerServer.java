@@ -8,16 +8,18 @@ import java.util.List;
 public class EventListenerServer implements Runnable, Listener{
     List<Joueur> listJoueurs;
     List<JSONObject> datas;
+    Server server;
 
-    public EventListenerServer(List<Joueur> joueurs) {
+    public EventListenerServer(List<Joueur> joueurs, Server server) {
 
         this.listJoueurs = joueurs;
         this.datas = Collections.synchronizedList( new LinkedList<>());
+        this.server = server;
     }
 
     @Override
     public void update(String eventType, JSONObject data) {
-       // System.out.println("recu :" + data);
+        System.out.println("recu :" + data);
         this.datas.add(data);
     }
 
@@ -26,11 +28,14 @@ public class EventListenerServer implements Runnable, Listener{
         while(true){
             if(!datas.isEmpty()) {
                 try {
+                    JSONObject data = datas.get(0);
+                    if(data.getString("type").equals("startGame") && !server.gameStart)
+                        server.gameStart = true;
                     for (Joueur j : listJoueurs) {
-                       if (j.id != datas.get(0).getInt("id")) {
+                       if (j.id != data.getInt("id")) {
                             PrintWriter pw = new PrintWriter(new OutputStreamWriter(j.socket.getOutputStream()));
-                            pw.println(this.datas.get(0));
-                            System.out.println("envoi du serv  data venant de " + datas.get(0).getString("pseudo") + " pour :" + j.pseudo);
+                            pw.println(data);
+                            System.out.println("envoi du serv  data venant de " + data.getString("pseudo") + " pour :" + j.pseudo);
                             pw.flush();
                         }
                     }

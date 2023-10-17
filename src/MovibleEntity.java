@@ -1,9 +1,10 @@
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
+import processing.data.JSONObject;
 
 public abstract class MovibleEntity implements ConvertJson{
-    protected int idTeams;
+    protected int idTeam;
     protected int idType;
     protected int life;
     protected PVector position , focus;
@@ -18,8 +19,8 @@ public abstract class MovibleEntity implements ConvertJson{
     protected PVector camera;
     protected boolean isSelected;
 
-    public MovibleEntity(int idTeams, int idType, int life, PVector position, int dmgAttack, float fireRate, float speedMovement, PApplet p, PImage map, EventManager event, PVector camera) {
-        this.idTeams = idTeams;
+    public MovibleEntity(int idTeam, int idType, int life, PVector position, int dmgAttack, float fireRate, float speedMovement, PApplet p, PImage map, EventManager event, PVector camera) {
+        this.idTeam = idTeam;
         this.idType = idType;
         this.life = life;
         this.position = position;
@@ -32,10 +33,15 @@ public abstract class MovibleEntity implements ConvertJson{
         this.focus = new PVector();
         this.camera = camera;
         this.isSelected = false;
+        imagePosition = new PImage();
     }
 
     public abstract void draw() throws InterruptedException;
     public abstract void setup();
+
+    @Override
+    public abstract JSONObject transform();
+
     public void deplacement() throws InterruptedException {
         if(!goalAchieved()) {
             PVector vector = new PVector( focus.x - position.x, focus.y - position.y);
@@ -49,7 +55,7 @@ public abstract class MovibleEntity implements ConvertJson{
     }
 
     public int getIdTeams() {
-        return idTeams;
+        return idTeam;
     }
 
     public int getIdType() {
@@ -76,8 +82,8 @@ public abstract class MovibleEntity implements ConvertJson{
         return speedMovement;
     }
 
-    public void setIdTeams(int idTeams) {
-        this.idTeams = idTeams;
+    public void setIdTeams(int idTeam) {
+        this.idTeam = idTeam;
     }
 
     public void setIdType(int idType) {
@@ -110,6 +116,11 @@ public abstract class MovibleEntity implements ConvertJson{
 
     public void setFocus(PVector focus) {
         this.focus = focus;
+        try {
+            event.notify("data", transform());
+        }catch (Exception e){
+            System.out.println("Erreur notify jeep_movement : " + e);
+        }
     }
 
     public boolean isSelected() {

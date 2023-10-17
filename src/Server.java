@@ -21,12 +21,12 @@ public class Server implements Runnable{
 	EventListenerServer eventListenerServer;
 	Thread thread;
 	Executor threadspoll = Executors.newFixedThreadPool(NBRJOUEURMAX);
-	ReentrantLock reentrantLock;
+	boolean gameStart;
 	
 	public Server() {
 		joueurs = Collections.synchronizedList(new ArrayList<>());
-		eventListenerServer = new EventListenerServer(joueurs);
-		reentrantLock = new ReentrantLock();
+		eventListenerServer = new EventListenerServer(joueurs, this);
+		gameStart = false;
 	}
 	
 	@Override
@@ -46,15 +46,16 @@ public class Server implements Runnable{
 				clientSocket.setTcpNoDelay(true);
 				giveId(clientSocket);
 				int id = joueurs.size();
-				Joueur joueur = new Joueur(id, clientSocket, reentrantLock);
+				Joueur joueur = new Joueur(id, clientSocket);
 				threadspoll.execute(joueur);
-				joueurs.add(joueur);
 				joueur.manager.addListener("data", eventListenerServer);
-			}while(joueurs.size() < NBRJOUEURMAX);
+				joueurs.add(joueur);
+				System.out.println("nbr joueur :" + joueurs.size());
+			}while(joueurs.size() < NBRJOUEURMAX && !gameStart);
 		}catch(Exception e){
 			System.err.println("Erreur: " + e); 
 			e.printStackTrace();
-			System.exit(1);
+			//System.exit(1);
 		}
 	} 
 	
