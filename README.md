@@ -7,6 +7,9 @@ Projet personel. <br />
 Jeu video de stratégie multijoueurs utilisant le protocole TCP. <br />
 En cours..
 
+## Competences
+Java, Processing, contolP5
+
 ## Divers
 
 divers informations.
